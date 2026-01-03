@@ -1,0 +1,36 @@
+[project]
+name = "pfund-kits"
+version = "0.0.1.dev1"
+description = "Configuration, CLI, and shared utilities for packages in pfund's ecosystem"
+license = "Apache-2.0"
+readme = "README.md"
+authors = [
+    { name = "Stephen Yau", email = "softwareentrepreneer+pfund-kits@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "rich>=14.2.0",
+    "tqdm>=4.67.1",
+    "click>=8.1.8",
+    "trogon>=0.6.0",
+    "pyyaml>=6.0.3",
+    "platformdirs>=4.2.2",
+    "python-dotenv>=1.2.1",
+    "prompt-toolkit>=3.0.52",
+]
+
+[project.scripts]
+pfund-cli = "pfund_kits.main:run_cli"
+
+[project.urls]
+homepage = "https://pfund.ai"
+repository = "https://github.com/PFund-Software-Ltd/pfund-kits"
+# documentation = ""
+
+[build-system]
+requires = ["uv_build>=0.9.21,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "pfund_kits"
+module-root = "src"

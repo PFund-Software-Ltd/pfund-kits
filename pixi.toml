@@ -1,0 +1,59 @@
+[workspace]
+authors = ["softwareentrepreneer <softwareentrepreneer+pfund-kits@gmail.com>"]
+channels = ["conda-forge"]
+name = "pfund-kits"
+platforms = ["osx-arm64", "linux-64", "win-64", "osx-64"]
+# updating this needs to also update the version in the ci.yml and templates/ci-workflow-template.yml files
+requires-pixi = ">=0.62.2"  # command: pixi workspace requires-pixi set ">=0.62.2"
+
+[tasks]
+
+[tasks.test-all]
+depends-on = [
+  { task = "test", environment = "py311" },
+  { task = "test", environment = "py312" },
+  { task = "test", environment = "py313" },
+]
+
+[dependencies]
+python = ">=3.11.14"
+uv = ">=0.9.21"
+
+[pypi-dependencies]
+pfund-kits = { path = ".", editable = true }
+rich = ">=14.2.0"
+tqdm = ">=4.67.1"
+click = ">=8.3.1"
+trogon = ">=0.6.0"
+pyyaml = ">=6.0.3"
+platformdirs = ">=4.5.1"
+python-dotenv = ">=1.2.1"
+prompt-toolkit = ">=3.0.52"
+
+[environments]
+default = ["py311", "dev", "optional"]
+py311 = ["py311", "test", "optional"]
+py312 = ["py312", "test", "optional"]
+py313 = ["py313", "test", "optional"]
+
+[feature.optional.pypi-dependencies]
+
+[feature.dev.pypi-dependencies]
+
+
+[feature.test.pypi-dependencies]
+pytest = ">=9.0.2"
+pytest-cov = ">=7.0.0"
+pytest-mock = ">=3.15.1"
+pytest-xdist = ">=3.8.0"
+[feature.test.tasks]
+test = "pytest -n auto"
+
+[feature.py311.dependencies]
+python = "3.11.*"
+
+[feature.py312.dependencies]
+python = "3.12.*"
+
+[feature.py313.dependencies]
+python = "3.13.*"
