@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 import sys
 import logging
 
+from pfund_kit.utils.yaml import load
+
 
 _exception_loggers: set[LoggerName] = set()
 
@@ -45,7 +47,7 @@ def setup_exception_logging(logger_name: LoggerName):
 
 
 # TODO
-def setup_logging_config(log_path, logging_config_file_path, user_logging_config: dict | None=None) -> dict:
+def setup_logging_config(logging_config_file_path, user_logging_config: dict | None=None) -> dict:
     pass
 
 

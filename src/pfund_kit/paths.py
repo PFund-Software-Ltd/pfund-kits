@@ -71,9 +71,5 @@ class ProjectPaths:
         self.cache_path = Path(user_cache_dir()) / self.project_name
         self.config_path = Path(user_config_dir()) / self.project_name / 'config'
         
-        # Config file
-        config_filename = f'{self.project_name}_config.yml'
-        self.config_file_path = self.config_path / config_filename
-    
     def __repr__(self):
         return f"{self.__class__.__name__}(project_name='{self.project_name}')"

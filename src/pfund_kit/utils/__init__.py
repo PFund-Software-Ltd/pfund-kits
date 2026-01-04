@@ -10,6 +10,33 @@ import logging
 import datetime
 
 
+def load_env_file(env: str = '', verbose: bool = False) -> str | None:
+    """
+    Load environment-specific .env file.
+    
+    Args:
+        env: Environment name (e.g., 'live', 'backtest'). Empty string loads '.env'.
+        verbose: If True, print load status.
+    
+    Returns:
+        Path to loaded env file, or None if not found.
+    """
+    from dotenv import find_dotenv, load_dotenv
+    
+    filename = f'.env.{env.lower()}' if env else '.env'
+    env_file_path = find_dotenv(filename=filename, usecwd=True, raise_error_if_not_found=False)
+    
+    if env_file_path:
+        load_dotenv(env_file_path, override=True)
+        if verbose:
+            print(f'Loaded {filename} from {env_file_path}')
+        return env_file_path
+    else:
+        if verbose:
+            print(f'{filename} not found')
+        return None
+    
+
 def get_free_port(host: str = '127.0.0.1') -> int:
     """
     Return an ephemeral TCP port chosen by the OS.
