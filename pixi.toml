@@ -1,7 +1,7 @@
 [workspace]
-authors = ["softwareentrepreneer <softwareentrepreneer+pfund-kits@gmail.com>"]
+authors = ["softwareentrepreneer <softwareentrepreneer+pfund-kit@gmail.com>"]
 channels = ["conda-forge"]
-name = "pfund-kits"
+name = "pfund-kit"
 platforms = ["osx-arm64", "linux-64", "win-64", "osx-64"]
 # updating this needs to also update the version in the ci.yml and templates/ci-workflow-template.yml files
 requires-pixi = ">=0.62.2"  # command: pixi workspace requires-pixi set ">=0.62.2"
@@ -20,7 +20,7 @@ python = ">=3.11.14"
 uv = ">=0.9.21"
 
 [pypi-dependencies]
-pfund-kits = { path = ".", editable = true }
+pfund-kit = { path = ".", editable = true }
 rich = ">=14.2.0"
 click = ">=8.3.1"
 trogon = ">=0.6.0"

@@ -1488,9 +1488,9 @@ packages:
   sha256: 29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484
   requires_python: '>=3.8'
 - pypi: ./
-  name: pfund-kits
+  name: pfund-kit
   version: 0.0.1.dev1
-  sha256: e3a001ae7012e42e273bdf629a6bcce2a8deec1c750c3a8591b24e5c1d87d3e9
+  sha256: bc75dbadeedb63da28e215deb802e553e376ec884033a801f76dab2b67f71ccd
   requires_dist:
   - rich>=14.2.0
   - click>=8.1.8

@@ -1,6 +1,6 @@
 import atexit
 
-from pfund_kits.cli import pfund_cli_group
+from pfund_kit.cli import pfund_cli_group
 
 
 def exit_cli():

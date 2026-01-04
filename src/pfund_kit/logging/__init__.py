@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeAlias
 if TYPE_CHECKING:
     from types import TracebackType
-    from pfund_kits.config import Configuration
+    from pfund_kit.config import Configuration
     LoggerName: TypeAlias = str
     
 import sys
@@ -39,9 +39,9 @@ def setup_exception_logging(logger_name: LoggerName):
             logging.getLogger(name).exception('Uncaught exception:', exc_info=(exception_class, exception, traceback))
     
     # Only set once to avoid multiple registrations (e.g. pfund and pfeed both call this)
-    if not hasattr(sys, '_pfund_kits_excepthook_installed'):
+    if not hasattr(sys, '_pfund_kit_excepthook_installed'):
         sys.excepthook = _custom_excepthook
-        sys._pfund_kits_excepthook_installed = True
+        sys._pfund_kit_excepthook_installed = True
 
 
 # TODO

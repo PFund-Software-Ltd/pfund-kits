@@ -16,7 +16,7 @@ def _detect_project_layout(source_file: Path) -> tuple[str, Path]:
     
     Returns:
         tuple: (project_name, package_path)
-            - project_name: Name of the package (e.g., 'pfund_kits')
+            - project_name: Name of the package (e.g., 'pfund_kit')
             - package_path: Actual package directory where code lives
     
     Note: If you need the project root (main_path), use package_path.parent

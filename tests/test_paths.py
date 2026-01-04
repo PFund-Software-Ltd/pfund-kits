@@ -1,6 +1,6 @@
 # VIBE-CODED
 """
-Tests for pfund_kits.paths module.
+Tests for pfund_kit.paths module.
 
 Tests three project layout scenarios:
 1. src-layout: project_root/src/package_name/  (development)
@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from pfund_kits.paths import ProjectPaths, _detect_project_layout
+from pfund_kit.paths import ProjectPaths, _detect_project_layout
 
 
 @pytest.fixture
@@ -29,10 +29,10 @@ def mock_platformdirs(tmp_path, monkeypatch):
     mock_config_dir = tmp_path / "config"
     
     # Patch the functions in the paths module (where they're imported)
-    monkeypatch.setattr('pfund_kits.paths.user_log_dir', lambda: str(mock_log_dir))
-    monkeypatch.setattr('pfund_kits.paths.user_data_dir', lambda: str(mock_data_dir))
-    monkeypatch.setattr('pfund_kits.paths.user_cache_dir', lambda: str(mock_cache_dir))
-    monkeypatch.setattr('pfund_kits.paths.user_config_dir', lambda: str(mock_config_dir))
+    monkeypatch.setattr('pfund_kit.paths.user_log_dir', lambda: str(mock_log_dir))
+    monkeypatch.setattr('pfund_kit.paths.user_data_dir', lambda: str(mock_data_dir))
+    monkeypatch.setattr('pfund_kit.paths.user_cache_dir', lambda: str(mock_cache_dir))
+    monkeypatch.setattr('pfund_kit.paths.user_config_dir', lambda: str(mock_config_dir))
     
     return {
         'log': mock_log_dir,
@@ -108,7 +108,7 @@ class TestDetectProjectLayout:
         """Test installed: site-packages/package_name/module.py"""
         # Create directory structure (simulating site-packages)
         site_packages = tmp_path / "site-packages"
-        package_dir = site_packages / "pfund_kits"
+        package_dir = site_packages / "pfund_kit"
         module_file = package_dir / "paths.py"
         
         # Create the directories and file
@@ -118,27 +118,27 @@ class TestDetectProjectLayout:
         # Test detection
         project_name, package_path = _detect_project_layout(module_file)
         
-        assert project_name == "pfund_kits"
+        assert project_name == "pfund_kit"
         assert package_path == package_dir
-        assert package_path.name == "pfund_kits"
+        assert package_path.name == "pfund_kit"
         assert package_path.parent == site_packages
     
-    def test_real_pfund_kits_layout(self):
-        """Test with the actual pfund_kits package (works in dev and any install)."""
+    def test_real_pfund_kit_layout(self):
+        """Test with the actual pfund_kit package (works in dev and any install)."""
         # Use the actual paths.py file location
-        from pfund_kits import paths
+        from pfund_kit import paths
         actual_file = Path(paths.__file__)
         
         project_name, package_path = _detect_project_layout(actual_file)
         
         # These invariants are always true regardless of installation method
-        assert project_name == "pfund_kits"
-        assert package_path.name == "pfund_kits"
+        assert project_name == "pfund_kit"
+        assert package_path.name == "pfund_kit"
         
         # Verify parent directory is reasonable (not overly restrictive about what it can be)
         parent_name = package_path.parent.name
         assert parent_name, "Parent directory name should not be empty"
-        assert parent_name != "pfund_kits", "Parent should not have same name as package"
+        assert parent_name != "pfund_kit", "Parent should not have same name as package"
 
 
 class TestProjectPathsClass:

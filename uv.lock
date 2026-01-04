@@ -74,7 +74,7 @@ wheels = [
 ]
 
 [[package]]
-name = "pfund-kits"
+name = "pfund-kit"
 version = "0.0.1.dev1"
 source = { editable = "." }
 dependencies = [

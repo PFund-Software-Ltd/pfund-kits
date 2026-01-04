@@ -15,7 +15,7 @@ from rich.progress import (
     TimeRemainingColumn,
     TimeElapsedColumn,
 )
-from pfund_kits.utils import RichColor, RichTextStyle
+from pfund_kit.utils import RichColor, RichTextStyle
 
 
 class ProgressBar:
@@ -52,7 +52,7 @@ class ProgressBar:
                       'elapsed' = show elapsed time, 'remaining' = show time remaining,
                       True = show both elapsed and remaining.
         """
-        from pfund_kits.utils import get_notebook_type
+        from pfund_kit.utils import get_notebook_type
         
         self._iterable = iterable
         self._total = total if total is not None else (len(iterable) if hasattr(iterable, '__len__') else None)
