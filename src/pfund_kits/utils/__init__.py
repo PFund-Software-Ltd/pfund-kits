@@ -1,34 +1,49 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from types import TracebackType
+    from pathlib import Path
     from pfund_kits.enums.notebook_type import NotebookType
-    LoggerName: TypeAlias = str
 
 import os
-import sys
 import logging
+import datetime
 
 
-_exception_loggers: set[LoggerName] = set()
-def setup_exception_logging(logger_name: LoggerName):
+def get_free_port(host: str = '127.0.0.1') -> int:
+    """
+    Return an ephemeral TCP port chosen by the OS.
+
+    NOTE: This does NOT reserve the port. Another process can claim it after
+    this function returns.
+    """
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, 0))
+        return s.getsockname()[1]
+
+
+def get_last_modified_time(file_path: Path | str, tz=datetime.timezone.utc) -> datetime.datetime:
     '''
-    Catches all uncaught exceptions and logs them instead of just printing to console.
-    
-    Can be called multiple times with different logger names - the exception will
-    be logged to all registered loggers.
-    '''
-    global _exception_loggers
-    _exception_loggers.add(logger_name)
+    Return the file's last modified time (mtime) as a timezone-aware datetime.
 
-    def _custom_excepthook(exception_class: type[BaseException], exception: BaseException, traceback: TracebackType):
-        for name in _exception_loggers:
-            logging.getLogger(name).exception('Uncaught exception:', exc_info=(exception_class, exception, traceback))
+    This reads the filesystem's modification timestamp (seconds since the Unix epoch)
+    and converts it into a `datetime` with the provided timezone.
+    '''
+    if not isinstance(tz, datetime.tzinfo):
+        raise TypeError("tz must be a datetime.tzinfo instance")
+    # Get the last modified time in seconds since epoch
+    last_modified_time = os.path.getmtime(file_path)
+    # Convert to datetime object
+    return datetime.datetime.fromtimestamp(last_modified_time, tz=tz)
+
     
-    # Only set once to avoid multiple registrations (e.g. pfund and pfeed both call this)
-    if not hasattr(sys, '_pfund_kits_excepthook_installed'):
-        sys.excepthook = _custom_excepthook
-        sys._pfund_kits_excepthook_installed = True
+def print_all_loggers(include_loggers_without_handlers: bool = False):
+    for name in sorted(logging.Logger.manager.loggerDict.keys()):
+        logger = logging.getLogger(name)
+        if logger.handlers:
+            print(f"  {name}: {logger.handlers}")
+        elif include_loggers_without_handlers:
+            print(f"  {name}: no handlers")
 
 
 def get_notebook_type() -> NotebookType | None:
