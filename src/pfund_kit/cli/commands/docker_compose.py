@@ -20,8 +20,8 @@ def docker_compose(ctx):
     from your project's config directory.
 
     Examples:
-        pfeed docker-compose up -d      # Start services in background
-        pfeed docker-compose ps          # List running services
+        pfund docker-compose up -d      # Start services in background
+        pfund docker-compose ps          # List running services
         pfeed docker-compose logs -f     # Follow logs
         pfeed docker-compose down        # Stop and remove services
     """

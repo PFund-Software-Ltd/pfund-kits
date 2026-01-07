@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-pfund-cli = "pfund_kit.main:run_cli"
+pfund-shell = "pfund_kit.pfund_shell.main:start_shell"
 
 [project.urls]
 homepage = "https://pfund.ai"

@@ -6,12 +6,12 @@ import click
 
 
 @click.group()
-def clear():
-    """Clear caches, data and logs."""
+def remove():
+    """Remove caches, data and logs."""
     pass
 
 
-def _clear_path(base_path: Path, target: str | None, path_name: str, ctx):
+def _remove_path(base_path: Path, target: str | None, path_name: str, ctx):
     """Shared logic for clearing cache/data/log paths.
 
     Args:
@@ -67,46 +67,46 @@ def _clear_path(base_path: Path, target: str | None, path_name: str, ctx):
         ctx.exit(1)
 
 
-@clear.command()
+@remove.command()
 @click.pass_context
 @click.argument('target', type=str, required=False)
 def cache(ctx, target):
-    """Clear cache directory or specific cache files/folders.
+    """Remove cache directory or specific cache files/folders.
 
     Examples:
-        pfeed clear cache              # Clear entire cache directory
-        pfeed clear cache api          # Clear cache/api folder
-        pfeed clear cache models.pkl   # Clear cache/models.pkl file
+        pfeed remove cache              # Remove entire cache directory
+        pfeed remove cache api          # Remove cache/api folder
+        pfeed remove cache models.pkl   # Remove cache/models.pkl file
     """
     config = ctx.obj['config']
-    _clear_path(config.cache_path, target, "Cache", ctx)
+    _remove_path(config.cache_path, target, "Cache", ctx)
 
 
-@clear.command()
+@remove.command()
 @click.pass_context
 @click.argument('target', type=str, required=False)
 def data(ctx, target):
-    """Clear data directory or specific data files/folders.
+    """Remove data directory or specific data files/folders.
 
     Examples:
-        pfeed clear data               # Clear entire data directory
-        pfeed clear data minio         # Clear data/minio folder
-        pfeed clear data backup.db     # Clear data/backup.db file
+        pfeed remove data               # Remove entire data directory
+        pfeed remove data minio         # Remove data/minio folder
+        pfeed remove data backup.db     # Remove data/backup.db file
     """
     config = ctx.obj['config']
-    _clear_path(config.data_path, target, "Data", ctx)
+    _remove_path(config.data_path, target, "Data", ctx)
 
 
-@clear.command()
+@remove.command()
 @click.pass_context
 @click.argument('target', type=str, required=False)
 def log(ctx, target):
-    """Clear log directory or specific log files/folders.
+    """Remove log directory or specific log files/folders.
 
     Examples:
-        pfeed clear log                # Clear entire log directory
-        pfeed clear log app            # Clear log/app folder
-        pfeed clear log error.log      # Clear log/error.log file
+        pfeed remove log                # Remove entire log directory
+        pfeed remove log app            # Remove log/app folder
+        pfeed remove log error.log      # Remove log/error.log file
     """
     config = ctx.obj['config']
-    _clear_path(config.log_path, target, "Log", ctx)
+    _remove_path(config.log_path, target, "Log", ctx)
