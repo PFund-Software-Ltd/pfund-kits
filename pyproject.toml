@@ -13,6 +13,7 @@ dependencies = [
     "click>=8.1.8",
     "trogon>=0.6.0",
     "pyyaml>=6.0.3",
+    "tomlkit>=0.13.3",
     "platformdirs>=4.2.2",
     "python-dotenv>=1.2.1",
     "prompt-toolkit>=3.0.51",
