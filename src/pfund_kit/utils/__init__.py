@@ -6,7 +6,6 @@ if TYPE_CHECKING:
 
 import os
 import timeit
-import logging
 import datetime
 
 

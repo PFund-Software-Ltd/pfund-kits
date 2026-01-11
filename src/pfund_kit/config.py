@@ -109,20 +109,33 @@ class Configuration(ABC):
             path.mkdir(parents=True, exist_ok=True)
     
     def _initialize_default_files(self):
-        """Copy default config files from package (e.g. site-packages) to user config directory."""
-        package_path = self._paths.package_path
-        
+        """Copy default config files from package to user config directory.
+
+        Tries two locations in order:
+        1. Inside package directory (for installed packages)
+        2. At project root (for development mode)
+        """
+        import shutil
+
         for filename in self.DEFAULT_FILES:
             dest = self.config_path / filename
             if dest.exists():
                 continue
-            
-            src = package_path / filename
+
+            # Try package directory first (installed package)
+            src = self._paths.package_path / filename
+
+            # If not found and we're in development mode, try project root
+            if not src.exists() and self._paths.project_root:
+                src = self._paths.project_root / filename
+
             if not src.exists():
-                raise FileNotFoundError(f"{filename} not found in package directory {package_path}")
+                raise FileNotFoundError(
+                    f"{filename} not found in package directory {self._paths.package_path}"
+                    + (f" or project root {self._paths.project_root}" if self._paths.project_root else "")
+                )
             
             try:
-                import shutil
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy(src, dest)
                 print(f"Copied {filename} to {self.config_path}")
