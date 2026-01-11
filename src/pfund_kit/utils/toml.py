@@ -162,10 +162,11 @@ def dump(
 
     # Append mode: merge with existing data
     if append and path.exists():
-        existing_data = load(file_path, to_python=False) or {}
-        # Merge new data into existing (new data overwrites on key conflicts)
-        existing_data.update(data)
-        prepared_data = _prepare_for_toml(existing_data)
+        from pfund_kit.utils import deep_merge
+        existing_data = load(file_path, to_python=True) or {}
+        # Deep merge: recursively merge nested dicts (new data overwrites on key conflicts)
+        merged_data = deep_merge(existing_data, data)
+        prepared_data = _prepare_for_toml(merged_data)
     else:
         # Overwrite mode
         prepared_data = _prepare_for_toml(data)
