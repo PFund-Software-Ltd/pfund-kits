@@ -4,6 +4,48 @@ from pathlib import Path
 import click
 
 
+def auto_detect_editor():
+    """Auto-detect an available code editor from popular choices."""
+    import shutil
+
+    # List of popular editors in order of preference
+    editors = ['cursor', 'code', 'zed', 'charm', 'nvim']
+
+    for cmd in editors:
+        if shutil.which(cmd):
+            return cmd
+    return None
+
+
+def open_file_with_editor(file_path: Path, editor_cmd: str):
+    """Open file with the specified editor, handling edge cases like Cursor's space bug."""
+    import subprocess
+    import platform
+
+    file_path_str = str(file_path)
+
+    try:
+        # Cursor CLI has a bug with spaces in paths, use shell mode with quotes
+        if editor_cmd == 'cursor':
+            if platform.system() != 'Windows':
+                # On macOS/Linux: escape spaces with backslashes AND wrap in quotes
+                escaped_path = file_path_str.replace(' ', r'\ ')
+                subprocess.run(f'{editor_cmd} "{escaped_path}"', shell=True, check=True)
+            else:
+                # On Windows: use quotes (standard Windows shell escaping)
+                # Note: If this doesn't work, Windows may have the same bug
+                subprocess.run(f'{editor_cmd} "{file_path_str}"', shell=True, check=True)
+        else:
+            # All other editors: use standard subprocess list approach (safest)
+            subprocess.run([editor_cmd, file_path_str], check=True)
+    except FileNotFoundError:
+        click.echo(f"Error: Editor '{editor_cmd}' not found. Please check if it's installed and in your PATH.", err=True)
+        raise
+    except subprocess.CalledProcessError as e:
+        click.echo(f"Error: Failed to open file with '{editor_cmd}': {e}", err=True)
+        raise
+
+
 @click.group()
 def config():
     """Manage configuration settings."""
@@ -49,47 +91,6 @@ def open_config(ctx, config_file, logging_file, docker_file, default_editor, edi
         pfeed config open -d -E           # Open docker file in default editor
         pfeed config open -l              # Just print the logging file path
     """
-    
-    def _auto_detect_editor():
-        """Auto-detect an available code editor from popular choices."""
-        import shutil
-
-        # List of popular editors in order of preference
-        editors = ['cursor', 'code', 'zed', 'charm', 'nvim']
-
-        for cmd in editors:
-            if shutil.which(cmd):
-                return cmd
-        return None
-
-    def _open_file_with_editor(file_path: Path, editor_cmd: str):
-        """Open file with the specified editor, handling edge cases like Cursor's space bug."""
-        import subprocess
-        import platform
-
-        file_path_str = str(file_path)
-
-        try:
-            # Cursor CLI has a bug with spaces in paths, use shell mode with quotes
-            if editor_cmd == 'cursor':
-                if platform.system() != 'Windows':
-                    # On macOS/Linux: escape spaces with backslashes AND wrap in quotes
-                    escaped_path = file_path_str.replace(' ', r'\ ')
-                    subprocess.run(f'{editor_cmd} "{escaped_path}"', shell=True, check=True)
-                else:
-                    # On Windows: use quotes (standard Windows shell escaping)
-                    # Note: If this doesn't work, Windows may have the same bug
-                    subprocess.run(f'{editor_cmd} "{file_path_str}"', shell=True, check=True)
-            else:
-                # All other editors: use standard subprocess list approach (safest)
-                subprocess.run([editor_cmd, file_path_str], check=True)
-        except FileNotFoundError:
-            click.echo(f"Error: Editor '{editor_cmd}' not found. Please check if it's installed and in your PATH.", err=True)
-            raise
-        except subprocess.CalledProcessError as e:
-            click.echo(f"Error: Failed to open file with '{editor_cmd}': {e}", err=True)
-            raise
-
     import subprocess
 
     config = ctx.obj['config']
@@ -117,11 +118,11 @@ def open_config(ctx, config_file, logging_file, docker_file, default_editor, edi
         click.edit(filename=str(file_path))
     else:
         # Auto-detect editor if not specified
-        editor = editor or _auto_detect_editor()
+        editor = editor or auto_detect_editor()
 
         if editor:
             try:
-                _open_file_with_editor(file_path, editor)
+                open_file_with_editor(file_path, editor)
                 # Get display name for the editor
                 editor_names = {
                     'cursor': 'Cursor',
@@ -133,11 +134,11 @@ def open_config(ctx, config_file, logging_file, docker_file, default_editor, edi
                 display_name = editor_names.get(editor, editor)
                 click.echo(f"Opened {project_name}'s {file_path.name} with {display_name}")
             except (FileNotFoundError, subprocess.CalledProcessError):
-                pass  # Error already printed by _open_file_with_editor
+                pass  # Error already printed by open_file_with_editor
         else:
             # No editor found, print helpful message
             click.echo("No code editor detected.", err=True)
-            click.echo("Tip: Specify an editor (e.g., 'pfeed config open -l code' to use VS Code) or use -E for system default editor", err=True)
+            click.echo(f"Tip: Specify an editor (e.g., '{project_name} config open -l code' to use VS Code) or use -E for system default editor", err=True)
             click.echo(f"\nFile location: {file_path}")
 
 

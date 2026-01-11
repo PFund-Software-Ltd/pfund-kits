@@ -108,6 +108,8 @@ def load(file_path: str | Path, to_python: bool = True) -> dict | None:
 def dump(
     data: Any,
     file_path: str | Path,
+    *,
+    append: bool = False,
 ) -> None:
     """
     Dump data to TOML file with automatic custom type serialization.
@@ -115,6 +117,7 @@ def dump(
     Args:
         data: Python dict to serialize (TOML only supports dicts at top level)
         file_path: Path to TOML file (str or Path)
+        append: If True, merge with existing data. If False, overwrite file (default)
 
     Examples:
         # Dump to file path (overwrites)
@@ -136,6 +139,10 @@ def dump(
         dump(data, "config.toml")
         dump(data, Path("config.toml"))
 
+        # Append/merge with existing data
+        dump(data1, "config.toml")
+        dump(data2, "config.toml", append=True)  # Merges data2 into existing file
+
         # Dump with custom types
         data = {
             'paths': {
@@ -153,8 +160,15 @@ def dump(
     path = Path(file_path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Prepare data for TOML serialization
-    prepared_data = _prepare_for_toml(data)
+    # Append mode: merge with existing data
+    if append and path.exists():
+        existing_data = load(file_path, to_python=False) or {}
+        # Merge new data into existing (new data overwrites on key conflicts)
+        existing_data.update(data)
+        prepared_data = _prepare_for_toml(existing_data)
+    else:
+        # Overwrite mode
+        prepared_data = _prepare_for_toml(data)
 
     # Write to file
     with open(path, 'w') as f:
