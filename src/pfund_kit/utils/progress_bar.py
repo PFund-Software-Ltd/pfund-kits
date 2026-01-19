@@ -15,7 +15,7 @@ from rich.progress import (
     TimeRemainingColumn,
     TimeElapsedColumn,
 )
-from pfund_kit.utils import RichColor, RichTextStyle
+from pfund_kit.style import RichColor, TextStyle
 
 
 class ProgressBar:
@@ -27,11 +27,11 @@ class ProgressBar:
         total: int | None = None,
         description: str = "Processing",
         *,
-        spinner_style: str = (RichTextStyle.BOLD + RichColor.MAGENTA).value,
-        text_style: str = (RichTextStyle.BOLD + RichColor.CYAN).value,
+        spinner_style: str = (TextStyle.BOLD + RichColor.MAGENTA).value,
+        text_style: str = (TextStyle.BOLD + RichColor.CYAN).value,
         bar_style: str = RichColor.BRIGHT_GREEN.value,
         bar_finished_style: str | None = None,
-        progress_style: str = (RichTextStyle.BOLD + RichColor.YELLOW).value,
+        progress_style: str = (TextStyle.BOLD + RichColor.YELLOW).value,
         transient: bool = False,
         show_time: bool | str = False,
     ):
@@ -124,11 +124,11 @@ def track(
     description: str = "Processing",
     total: int | None = None,
     *,
-    spinner_style: str = (RichTextStyle.BOLD + RichColor.MAGENTA).value,
-    text_style: str = (RichTextStyle.BOLD + RichColor.CYAN).value,
+    spinner_style: str = (TextStyle.BOLD + RichColor.MAGENTA).value,
+    text_style: str = (TextStyle.BOLD + RichColor.CYAN).value,
     bar_style: str = RichColor.BRIGHT_GREEN.value,
     bar_finished_style: str | None = None,
-    progress_style: str = (RichTextStyle.BOLD + RichColor.YELLOW).value,
+    progress_style: str = (TextStyle.BOLD + RichColor.YELLOW).value,
     transient: bool = False,
     show_time: bool | str = False,
 ) -> Iterator:
