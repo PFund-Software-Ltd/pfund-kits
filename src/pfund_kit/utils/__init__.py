@@ -2,11 +2,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
-    from pfund_kit.enums.notebook_type import NotebookType
 
 import os
 import timeit
 import datetime
+
+from pfund_kit.enums.notebook_type import NotebookType
 
 
 __all__ = [
