@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from typing import Iterable, Iterator
     from rich.progress import TaskID
 
+import os
 from rich.progress import (
     Progress,
     SpinnerColumn,
@@ -18,8 +19,19 @@ from rich.progress import (
 from pfund_kit.style import RichColor, TextStyle
 
 
+def _should_disable_progress() -> bool:
+    """Check if progress bars should be disabled via environment variable."""
+    return os.getenv('PFUND_DISABLE_PROGRESS_BAR', '').lower() in ('1', 'true', 'yes')
+
+
 class ProgressBar:
-    """A simple wrapper around rich.progress.Progress for easy usage."""
+    """A simple wrapper around rich.progress.Progress for easy usage.
+
+    Note:
+        Progress bars can be disabled globally by setting the environment variable
+        PFUND_DISABLE_PROGRESS_BAR=1 (or 'true' or 'yes'). This is useful when
+        debugging with pdb or running in non-interactive environments.
+    """
     
     def __init__(
         self,
@@ -53,17 +65,17 @@ class ProgressBar:
                       True = show both elapsed and remaining.
         """
         from pfund_kit.utils import get_notebook_type
-        
+
         self._iterable = iterable
         self._total = total if total is not None else (len(iterable) if hasattr(iterable, '__len__') else None)
         self._description = description
         self._transient = transient
         self._in_notebook = get_notebook_type() is not None
-        
+
         # If bar_finished_style is not specified, use the same as bar_style
         if bar_finished_style is None:
             bar_finished_style = bar_style
-        
+
         # Build columns list
         columns = [
             SpinnerColumn(style=spinner_style),
@@ -71,7 +83,7 @@ class ProgressBar:
             BarColumn(complete_style=bar_style, finished_style=bar_finished_style),
             TaskProgressColumn(text_format=f"[{progress_style}]{{task.percentage:>3.0f}}%"),
         ]
-        
+
         # Add time columns based on show_time parameter
         if show_time == 'elapsed':
             columns.append(TimeElapsedColumn())
@@ -80,8 +92,8 @@ class ProgressBar:
         elif show_time is True:
             columns.append(TimeElapsedColumn())
             columns.append(TimeRemainingColumn())
-        
-        self._progress = Progress(*columns, transient=transient)
+
+        self._progress = Progress(*columns, transient=transient, disable=_should_disable_progress())
         self._task_id: TaskID | None = None
     
     def __enter__(self) -> ProgressBar:
@@ -134,9 +146,9 @@ def track(
 ) -> Iterator:
     """
     Track progress over an iterable.
-    
+
     A simple function to iterate with a progress bar (similar to tqdm).
-    
+
     Args:
         iterable: The iterable to track.
         description: Text to display next to the progress bar.
@@ -147,25 +159,33 @@ def track(
         bar_finished_style: Style for the progress bar when finished. If None, uses bar_style.
         progress_style: Style for the percentage text.
         transient: If True, the progress bar disappears after completion.
-        show_time: Time display mode. False (default) = no time, 
+        show_time: Time display mode. False (default) = no time,
                   'elapsed' = show elapsed time, 'remaining' = show time remaining,
                   True = show both elapsed and remaining.
-    
+
     Yields:
         Items from the iterable.
-    
+
+    Note:
+        Progress bars can be disabled globally by setting the environment variable
+        PFUND_DISABLE_PROGRESS_BAR=1 (or 'true' or 'yes').
+
     Examples:
         # Basic usage
         for item in track([1, 2, 3, 4, 5], description="Processing"):
             process(item)
-        
+
         # With elapsed time
         for item in track(data, description="Loading", show_time='elapsed'):
             load(item)
-        
+
         # Custom colors
         for item in track(data, bar_style="red", text_style="bold white"):
             process(item)
+
+        # Disable progress bars (useful for debugging)
+        import os
+        os.environ['PFUND_DISABLE_PROGRESS_BAR'] = '1'
     """
     yield from ProgressBar(
         iterable,
