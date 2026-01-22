@@ -102,7 +102,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.1.8" },
-    { name = "packaging", specifier = ">=26.0" },
+    { name = "packaging", specifier = ">=25.0" },
     { name = "platformdirs", specifier = ">=4.2.2" },
     { name = "prompt-toolkit", specifier = ">=3.0.51" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
