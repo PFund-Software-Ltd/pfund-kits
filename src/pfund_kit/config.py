@@ -6,13 +6,14 @@ from abc import ABC, abstractmethod
 from pfund_kit.utils.yaml import load, dump
 from pfund_kit.style import cprint, TextStyle, RichColor
 from pfund_kit.paths import ProjectPaths
+from packaging.version import Version
 
 
 __all__ = ['Configuration']
 
 
 class Configuration(ABC):
-    __version__ = "0.1"
+    __version__ = "0.1.0"
     
     LOGGING_CONFIG_FILENAME = 'logging.yml'
     DOCKER_COMPOSE_FILENAME = 'compose.yml'
@@ -38,7 +39,11 @@ class Configuration(ABC):
 
         # load config file
         self._data = load(self.file_path) or {}
-            
+
+        # Allow subclasses to initialize their attributes from _data
+        # before _migrate() is called (which uses to_dict())
+        self._initialize_from_data()
+
         # configurable paths
         default_data_path = self._paths.data_path
         default_log_path = self._paths.log_path
@@ -99,6 +104,16 @@ class Configuration(ABC):
         """
         pass
     
+    @abstractmethod
+    def _initialize_from_data(self):
+        """Hook for subclasses to initialize attributes from self._data.
+
+        Called after self._data is loaded but before _migrate() runs.
+        Override this in subclasses that have additional attributes
+        used by to_dict().
+        """
+        pass
+
     def ensure_dirs(self, *paths: Path):
         """Ensure directory paths exist."""
         if not paths:
@@ -157,7 +172,7 @@ class Configuration(ABC):
         """Migrate config from old version to current version."""
         from_version = existing_version
         to_version = self.__version__
-        assert float(to_version) > float(from_version), f"Cannot migrate from version {from_version} to {to_version}"
+        assert Version(to_version) > Version(from_version), f"Cannot migrate from version {from_version} to {to_version}"
         cprint(f"Migrating config from version {from_version} to {to_version}", style=str(TextStyle.BOLD + RichColor.RED))
         
         # expected schema, what config data should be based on __version__

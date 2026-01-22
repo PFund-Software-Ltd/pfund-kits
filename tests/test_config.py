@@ -777,6 +777,10 @@ class TestConfigurationSubclassing:
         # Create subclass with only logging.yml
         class MinimalConfiguration(Configuration):
             DEFAULT_FILES = [Configuration.LOGGING_CONFIG_FILENAME]
+            def _initialize_from_data(self):
+                pass
+            def prepare_docker_context(self):
+                pass
 
         # Should work without compose.yml
         config = MinimalConfiguration(project_name, source_file)
@@ -792,6 +796,10 @@ class TestConfigurationSubclassing:
         # Create subclass with different version
         class CustomConfiguration(Configuration):
             __version__ = "1.0"
+            def _initialize_from_data(self):
+                pass
+            def prepare_docker_context(self):
+                pass
 
         # Create config
         config = CustomConfiguration(project_name, source_file)
