@@ -16,3 +16,13 @@ class TelegramHandler(Handler):
             self.chat_id,
             text=self.format(record)
         )
+
+
+def get_telegram_bot_updates(token):
+    import requests
+    url = f'https://api.telegram.org/bot{token}/getUpdates'
+    ret = requests.get(url)
+    try:
+        return ret.json()
+    except Exception:
+        return ret
