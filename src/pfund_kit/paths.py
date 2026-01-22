@@ -28,7 +28,7 @@ def _detect_project_layout(source_file: Path) -> tuple[str, Path, Path | None]:
     # This helps distinguish development vs installed package
     project_root = None
     current = package_path
-    for _ in range(3):  # Look up to 3 levels
+    for _ in range(10):  # Look up to 10 levels (handles deep nesting)
         current = current.parent
         if (current / 'pyproject.toml').exists():
             project_root = current
