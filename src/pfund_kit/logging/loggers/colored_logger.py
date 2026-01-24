@@ -58,4 +58,6 @@ class ColoredLogger(logging.Logger):
                 extra = {}
             extra['style'] = style
 
-        super()._log(level, msg, args, exc_info, extra, stack_info, stacklevel)
+        # Increment stacklevel by 1 to account for this wrapper frame,
+        # so the correct caller location is reported instead of colored_logger.py
+        super()._log(level, msg, args, exc_info, extra, stack_info, stacklevel + 1)
