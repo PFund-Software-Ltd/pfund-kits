@@ -1919,8 +1919,8 @@ packages:
   requires_python: '>=3.10'
 - pypi: ./
   name: pfund-kit
-  version: 0.1.4
-  sha256: 6cf8aa6d9c336d3589069e1d36c14112d2820a11fa5fc3b2b3910d0f2c0b2f49
+  version: 0.2.0
+  sha256: b47a715a7eda17ebe7f8f746d52c7445defb064627642b6e0ba5005ae327d612
   requires_dist:
   - rich>=14.2.0
   - tqdm>=4.67.1
