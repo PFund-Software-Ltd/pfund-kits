@@ -173,7 +173,7 @@ class Configuration(ABC):
         from_version = existing_version
         to_version = self.__version__
         assert Version(to_version) > Version(from_version), f"Cannot migrate from version {from_version} to {to_version}"
-        cprint(f"Migrating config from version {from_version} to {to_version}", style=str(TextStyle.BOLD + RichColor.RED))
+        cprint(f"Migrating config from version {from_version} to {to_version}", style=TextStyle.BOLD + RichColor.RED)
         
         # expected schema, what config data should be based on __version__
         expected_data = self.to_dict()

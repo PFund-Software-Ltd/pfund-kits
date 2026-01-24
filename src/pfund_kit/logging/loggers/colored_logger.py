@@ -23,7 +23,7 @@ class ColoredLogger(logging.Logger):
 
         # Use with style parameter
         logger.info("Success!", style="bold green")
-        logger.debug("Details", style=str(TextStyle.ITALIC + RichColor.CYAN))
+        logger.debug("Details", style=TextStyle.ITALIC + RichColor.CYAN)
         logger.error("Failed", style="bold bright_red")
 
         # Still works without style (uses default level coloring)
