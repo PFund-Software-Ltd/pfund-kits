@@ -181,11 +181,25 @@ def start_shell():
                 except click.exceptions.ClickException as e:
                     e.show()
             else:
-                # We're at root level - use the shell_group which has all commands merged
-                try:
-                    pfund_shell_group.main(args=command_splits, standalone_mode=False)
-                except click.exceptions.ClickException as e:
-                    e.show()
+                # We're at root level - find which command group owns this command
+                # and invoke through that group to ensure proper context setup (ctx.obj)
+                owner_group = None
+                owner_name = None
+                for group_name, group in command_groups.items():
+                    if group.get_command(None, first_command):
+                        owner_group = group
+                        owner_name = group_name
+                        break
+
+                if owner_group:
+                    # Invoke through the owning group so its callback sets up ctx.obj
+                    try:
+                        owner_group.main(args=command_splits, standalone_mode=False, prog_name=owner_name)
+                    except click.exceptions.ClickException as e:
+                        e.show()
+                else:
+                    # Command not found in any group
+                    click.echo(f"Unknown command: {first_command}")
 
         except KeyboardInterrupt:  # Handle Ctrl+C
             print()  # New line
